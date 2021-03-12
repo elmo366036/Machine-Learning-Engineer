@@ -1,0 +1,64 @@
+class Net(nn.Module):
+    ### TODO: choose an architecture, and complete the class
+    def __init__(self):
+        super(Net, self).__init__()
+        ## Define layers of a CNN
+        # convolutional layer (sees 256x256x3 image tensor)
+        self.conv1 = nn.Conv2d(3, 16, 3, padding=1)
+        # convolutional layer (sees 243x243x16 tensor)
+        self.conv2 = nn.Conv2d(16, 32, 3, padding=1)
+        # convolutional layer (sees 64x64x32 tensor)
+        self.conv3 = nn.Conv2d(32, 64, 3, padding=1)
+        # convolutional layer (sees 32x32x32 tensor)
+        self.conv4 = nn.Conv2d(64, 128, 3, padding=1)
+        # convolutional layer (sees 16x16x32 tensor)
+        self.conv5 = nn.Conv2d(128, 256, 3, padding=1)
+        # convolutional layer (sees 8x8x32 tensor)
+        self.conv6 = nn.Conv2d(256, 512, 3, padding=1)
+        
+        # max pooling layer
+        self.pool = nn.MaxPool2d(2, 2)
+
+        # linear layer (512 * 4 * 4 -> 512 * 2 * 2)
+        self.fc1 = nn.Linear(512 * 4 * 4, 512 * 2 * 2 )
+        # linear layer (512 * 2 * 2 -> 512 * 2)
+        self.fc2 = nn.Linear(512 * 2 * 2, 512 * 2)
+        # linear layer (512 * 2 -> 133)
+        self.fc3 = nn.Linear(512 * 2, 133)
+        
+        # dropout layers 
+        self.dropout1 = nn.Dropout(0.1)
+        self.dropout2 = nn.Dropout(0.15)
+        self.dropout3 = nn.Dropout(0.2)
+        self.dropout4 = nn.Dropout(0.3)
+        self.dropout5 = nn.Dropout(0.35)
+        self.dropout6 = nn.Dropout(0.4)
+                              
+    def forward(self, x):
+        ## Define forward behavior
+        
+        # convolution, maxpooling, and dropout
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.dropout1(x)
+        x = self.pool(F.relu(self.conv2(x)))
+        x = self.dropout2(x)
+        x = self.pool(F.relu(self.conv3(x)))
+        x = self.dropout3(x)
+        x = self.pool(F.relu(self.conv4(x)))
+        x = self.dropout4(x)
+        x = self.pool(F.relu(self.conv5(x)))
+        x = self.dropout5(x)
+        x = self.pool(F.relu(self.conv6(x)))
+        x = self.dropout6(x)
+        
+        # flatten
+        x = x.view(-1,512 * 4 * 4)
+        
+        # hidden layers
+        x = F.relu(self.fc1(x))
+        x = self.dropout3(x)
+        x = F.relu(self.fc2(x))
+        x = self.dropout3(x)
+        x = self.fc3(x)
+             
+        return x
